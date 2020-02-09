@@ -1,0 +1,40 @@
+{
+  "name": "app-marvel",
+  "version": "0.0.1",
+  "description": "Technical Test SPA",
+  "productName": "Marvel Comics",
+  "cordovaId": "org.cordova.quasar.app",
+  "capacitorId": "",
+  "author": "hugochenr@gmail.com",
+  "private": true,
+  "scripts": {
+    "lint": "eslint \"src/**/*.{js,vue}\"",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "axios": "^0.18.1",
+    "md5": "^2.2.1",
+    "moment": "^2.24.0",
+    "quasar": "^1.0.0"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.0.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "dotenv": "^8.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.0.0",
+    "prettier": "^1.18.2"
+  },
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ]
+}
