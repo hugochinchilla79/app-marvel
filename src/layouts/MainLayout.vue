@@ -25,7 +25,7 @@
       content-class="bg-grey-1"
     >
       <q-list>
-        <q-item-label header class="text-grey-8">Essential Links</q-item-label>
+
       </q-list>
     </q-drawer>
 
@@ -42,7 +42,6 @@ export default {
   data () {
     return {
       leftDrawerOpen: false
-
     }
   }
 }

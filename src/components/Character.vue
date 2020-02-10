@@ -2,7 +2,7 @@
   <div>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="fit full-height" full-height flat bordered dark>
-        <q-img v-bind:src="img" />
+        <q-img v-bind:src="img" full-height/>
 
         <q-card-section>
           <div class="text-h5 q-mt-sm q-mb-xs">{{ value.name }}</div>
@@ -11,6 +11,8 @@
         </q-card-section>
 
         <q-card-actions>
+          <q-btn flat color="primary" label="Comics" />
+          <q-btn flat color="primary" label="Stories" />
           <q-btn flat round color="red" icon="favorite_border" />
 
           <q-space />

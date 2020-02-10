@@ -1,6 +1,19 @@
 <template>
   <div class="q-pa-md">
     <div class="row">
+      <div class="col-xs-12 col-lg-3 col-md-3 col-sm-6 text-center">
+        <q-input v-model="filters.name" label="Name" outlined> </q-input>
+      </div>
+      <div
+        class="col-xs-12 col-lg-3 col-md-3 col-sm-6 text-center self-align-center"
+      >
+        <q-btn v-on:click="getFilteredCharacters()" color="primary">
+          Search
+        </q-btn>
+      </div>
+    </div>
+
+    <div class="row">
       <div
         v-for="character in characters"
         v-bind:key="character.id"
@@ -26,24 +39,36 @@ export default {
   },
   data () {
     return {
-      characters: []
+      characters: [],
+      filters: {
+        name: ''
+      }
     }
   },
-  methods: {},
+  methods: {
+    getFilteredCharacters () {
+      const { baseUrl, characters } = api
+      let commonParams = hash.get()
+      commonParams['name'] = this.filters.name
+      const url = `${baseUrl}${characters.path}`
+      const endpoint = generateUrl(url, commonParams)
+
+      this.$axios.get(endpoint).then(response => {
+        if (response.data.code === 200) {
+          this.characters = response.data.data.results
+        }
+      })
+    }
+  },
   computed: {},
   beforeMount () {
     const { baseUrl, characters } = api
-
     const commonParams = hash.get()
     const url = `${baseUrl}${characters.path}`
-
     const endpoint = generateUrl(url, commonParams)
 
-    console.log(endpoint)
     this.$axios.get(endpoint).then(response => {
-      console.log(response.data.status)
       if (response.data.code === 200) {
-        console.log(response.data.data.result)
         this.characters = response.data.data.results
       }
     })
