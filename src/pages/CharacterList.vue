@@ -62,12 +62,14 @@ export default {
   },
   computed: {},
   beforeMount () {
+    this.$q.loading.show()
     const { baseUrl, characters } = api
     const commonParams = hash.get()
     const url = `${baseUrl}${characters.path}`
     const endpoint = generateUrl(url, commonParams)
 
     this.$axios.get(endpoint).then(response => {
+      this.$q.loading.hide()
       if (response.data.code === 200) {
         this.characters = response.data.data.results
       }

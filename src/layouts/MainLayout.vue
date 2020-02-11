@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header  elevated class="bg-dark">
+    <q-header elevated class="bg-dark">
       <q-toolbar>
         <q-btn
           flat
@@ -14,7 +14,6 @@
         <q-toolbar-title>
           Marvel Comics
         </q-toolbar-title>
-
       </q-toolbar>
     </q-header>
 
@@ -25,7 +24,12 @@
       content-class="bg-grey-1"
     >
       <q-list>
-
+        <q-item-label header class="text-grey-8">Sections</q-item-label>
+        <EssentialLink
+          v-for="link in essentialLinks"
+          :key="link.title"
+          v-bind="link"
+        />
       </q-list>
     </q-drawer>
 
@@ -36,12 +40,30 @@
 </template>
 
 <script>
+import EssentialLink from 'components/EssentialLink'
 
 export default {
   name: 'MainLayout',
+  components: {
+    EssentialLink
+  },
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      essentialLinks: [
+        {
+          title: 'Characters',
+          caption: 'Characters list',
+          icon: 'code',
+          link: '/characters'
+        },
+        {
+          title: 'Comics',
+          caption: 'Comics List',
+          icon: 'code',
+          link: '/comics'
+        }
+      ]
     }
   }
 }

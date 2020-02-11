@@ -5,18 +5,11 @@
         <q-img v-bind:src="img" full-height />
 
         <q-card-section>
-          <div class="text-h5 q-mt-sm q-mb-xs">{{ value.name }}</div>
+          <div class="text-h5 q-mt-sm q-mb-xs">{{ value.title }}</div>
           <div class="text-caption text-grey"></div>
         </q-card-section>
 
         <q-card-actions>
-          <q-btn
-            :to="{ name: 'characters-comics', params: { id: value.id, comicsUri: value.comics.collectionURI } }"
-            flat
-            color="primary"
-            label="Comics"
-          />
-          <q-btn flat color="primary" label="Stories" />
           <q-btn flat round color="red" icon="favorite_border" />
 
           <q-space />
