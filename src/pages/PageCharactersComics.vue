@@ -1,5 +1,17 @@
 <template>
   <div>
+    <div v-if="character" class="row q-pa-md">
+      <div class="col-xs-12 col-sm-4 col-lg-4 col-md-4">
+        <q-card class="my-card">
+          <q-img :src="img" style="max-height:250px;" basic>
+            <div class="absolute-bottom text-h6">
+             {{ character.name }} comics
+            </div>
+          </q-img>
+        </q-card>
+      </div>
+    </div>
+
     <div class="row">
       <div
         v-for="comic in comics"
@@ -27,29 +39,51 @@ export default {
   },
   data () {
     return {
-      comics: []
+      comics: [],
+      character: null
     }
   },
   name: 'PageCharactersComic',
   methods: {},
-  computed: {},
+  computed: {
+    img () {
+      return `${this.character.thumbnail.path}.${this.character.thumbnail.extension}`
+    }
+  },
   beforeMount () {
     const { baseUrl, characters } = api
 
+    const characterUrl = `${baseUrl}${characters.path}/${this.id}`
     const url = `${baseUrl}${characters.path}/${this.id}/comics`
-
     const commonParams = hash.get()
+
     const endpoint = generateUrl(url, commonParams)
+    const characterEndpoint = generateUrl(characterUrl, commonParams)
+
+    const requests = [
+      this.$axios.get(endpoint),
+      this.$axios.get(characterEndpoint)
+    ]
 
     this.$q.loading.show()
 
-    this.$axios.get(endpoint).then(response => {
-      this.$q.loading.hide()
-      if (response.data.code === 200) {
-        console.log(response.data.data.results)
-        this.comics = response.data.data.results
-      }
-    })
+    this.$axios.all(requests).then(
+      this.$axios.spread((...responses) => {
+        this.$q.loading.hide()
+
+        const responseComics = responses[0]
+        const responseCharacter = responses[1]
+
+        if (responseComics.data.code === 200) {
+          this.comics = responseComics.data.data.results
+        }
+
+        console.log(responseCharacter)
+        if (responseCharacter.data.code === 200) {
+          this.character = responseCharacter.data.data.results[0]
+        }
+      })
+    )
   }
 }
 </script>

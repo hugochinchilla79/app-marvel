@@ -1,7 +1,14 @@
 <template>
   <div>
     <div class="q-pa-md row items-start q-gutter-md">
-      <q-card class="fit full-height" full-height flat bordered dark>
+      <q-card
+        class="fit full-height"
+        style="min-height: 400px"
+        full-height
+        flat
+        bordered
+        dark
+      >
         <q-img v-bind:src="img" full-height />
 
         <q-card-section>
@@ -11,13 +18,25 @@
 
         <q-card-actions>
           <q-btn
-            :to="{ name: 'characters-comics', params: { id: value.id, comicsUri: value.comics.collectionURI } }"
+            :to="{
+              name: 'characters-comics',
+              params: { id: value.id, comicsUri: value.comics.collectionURI }
+            }"
             flat
             color="primary"
             label="Comics"
           />
-          <q-btn flat color="primary" label="Stories" />
-          <q-btn flat round color="red" icon="favorite_border" />
+          <q-btn
+            :to="{
+              name: 'characters-stories',
+              params: { id: value.id, storiesUri: value.comics.collectionURI }
+            }"
+            flat
+            color="primary"
+            label="Stories"
+          />
+          <q-btn v-if="!saved" v-on:click="saveCharacter()" flat round color="red" icon="favorite_border" />
+          <q-btn v-if="saved" flat round color="red" icon="favorite" />
 
           <q-space />
 
@@ -45,6 +64,8 @@
 </template>
 
 <script>
+import storage from '../storage'
+
 export default {
   name: 'character',
   props: {
@@ -52,14 +73,26 @@ export default {
   },
   data () {
     return {
-      expanded: false
+      expanded: false,
+      storage: storage
     }
   },
-  methods: {},
+  methods: {
+    saveCharacter () {
+      storage.saveCharacter(this.value)
+      storage.saveCharacterId(this.value.id)
+    }
+  },
   computed: {
     img () {
       return `${this.value.thumbnail.path}.${this.value.thumbnail.extension}`
+    },
+    saved () {
+      return (storage.characterIds.indexOf(this.value.id) !== -1)
     }
+  },
+  beforeMount () {
+
   }
 }
 </script>

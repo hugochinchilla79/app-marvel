@@ -1,33 +1,127 @@
 <template>
   <div class="q-pa-md">
-    <div class="row">
-      <div class="col-xs-12 col-lg-3 col-md-3 col-sm-6 text-center">
-        <q-input v-model="filters.name" label="Name" outlined> </q-input>
-      </div>
-      <div
-        class="col-xs-12 col-lg-3 col-md-3 col-sm-6 text-center self-align-center"
-      >
-        <q-btn v-on:click="getFilteredCharacters()" color="primary">
-          Search
-        </q-btn>
-      </div>
-    </div>
+    <q-card class="my-card q-pa-md">
+      <q-card-section>
+        <div class="row">
+          <div class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-center q-pa-sm">
+            <q-input v-model="filters.name" label="Part or full name" outlined>
+            </q-input>
+          </div>
+
+          <div class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left q-pa-sm">
+            <q-btn v-on:click="filterCharactersByName()" color="primary">
+              Filter by Name
+            </q-btn>
+          </div>
+        </div>
+
+        <div class="row">
+          <div
+            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-center self-align-center q-pa-sm"
+          >
+            <q-select
+              filled
+              use-input
+              multiple
+              use-chips
+              v-model="filters.story"
+              input-debounce="0"
+              label="Enter a comic's name"
+              :options="stories"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+
+          <div
+            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left self-align-center q-pa-sm"
+          >
+            <q-btn v-on:click="filterCharactersByComics()" color="primary">
+              FILTER BY COMICS
+            </q-btn>
+          </div>
+        </div>
+
+        <div class="row">
+          <div
+            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-center self-align-center q-pa-sm"
+          >
+            <q-select
+              filled
+              use-input
+              multiple
+              use-chips
+              v-model="filters.comic"
+              input-debounce="0"
+              label="Enter a comic's name"
+              :options="comics"
+              @filter="getComics"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+
+          <div
+            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left self-align-center q-pa-sm"
+          >
+            <q-btn v-on:click="filterCharactersByStories()" color="primary">
+              FILTER BY COMICS
+            </q-btn>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-3 q-pa-sm">
+            <q-btn v-on:click="clearFilters()" color="primary">
+                Clean filters
+            </q-btn>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
 
     <div class="row">
       <div
         v-for="character in characters"
         v-bind:key="character.id"
         class="col-xs-12 col-lg-3 col-md-3 col-sm-6 text-center"
+        style="min:height: 500px"
       >
         <character v-bind:value="character"></character>
       </div>
+    </div>
+
+    <div class="q-pa-lg flex flex-center">
+      <q-pagination
+        v-if="filtered"
+        v-model="currentPage"
+        ,
+        color="black"
+        :max="total"
+        :max-pages="15"
+        :boundary-numbers="false"
+        @input="changePage()"
+      >
+      </q-pagination>
     </div>
   </div>
 </template>
 
 <script>
 import hash from '../commons/hash'
-import { generateUrl } from '../commons/common'
+import { generateUrl, getArrayIds } from '../commons/common'
 import api from '../api'
 
 import Character from '../components/Character.vue'
@@ -41,39 +135,177 @@ export default {
     return {
       characters: [],
       filters: {
-        name: ''
+        name: '',
+        comic: [],
+        story: []
+      },
+      currentPage: 1,
+      total: 1,
+      count: 20,
+      comics: [],
+      stories: [],
+      currentUrl: '',
+      filtered: false,
+      dataFilters: {
+        nameStartsWith: '',
+        comics: '',
+        stories: ''
       }
     }
   },
   methods: {
-    getFilteredCharacters () {
+    getFilteredCharacters (page = 1, count = 20, filters = null) {
       const { baseUrl, characters } = api
       let commonParams = hash.get()
-      commonParams['name'] = this.filters.name
+
+      let params = filters
+        ? { ...commonParams, ...filters }
+        : { ...commonParams }
+
       const url = `${baseUrl}${characters.path}`
-      const endpoint = generateUrl(url, commonParams)
+      const endpoint = generateUrl(url, params, page, count)
 
       this.$axios.get(endpoint).then(response => {
         if (response.data.code === 200) {
+          this.total = Math.floor(
+            response.data.data.total / response.data.data.count
+          )
+
+          this.total =
+            response.data.data.total % response.data.data.count !== 0
+              ? this.total + 1
+              : this.total
           this.characters = response.data.data.results
+          this.currentPage = 1
         }
       })
+    },
+    changePage () {
+      if (this.filtered) {
+        return
+      }
+      this.$q.loading.show()
+      this.$axios
+        .get(this.currentUrl)
+        .then(response => {
+          if (response.data.code === 200) {
+            this.total = Math.floor(
+              response.data.data.total / response.data.data.count
+            )
+
+            this.total =
+              response.data.data.total % response.data.data.count !== 0
+                ? this.total + 1
+                : this.total
+            this.characters = response.data.data.results
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.$q.loading.hide()
+          window.scrollTo(0, 0)
+        })
+    },
+    getComics (val, update, abort) {
+      const { baseUrl, comics } = api
+      let commonParams = hash.get()
+
+      const url = `${baseUrl}${comics.path}`
+      console.log(val)
+      if (val !== '') {
+        commonParams['titleStartsWith'] = val
+      }
+
+      const endpoint = generateUrl(url, commonParams)
+
+      update(() => {
+        this.$axios
+          .get(endpoint)
+          .then(response => {
+            this.comics = response.data.data.results.map(comic => {
+              return {
+                value: comic.id,
+                label: comic.title
+              }
+            })
+          })
+          .catch(() => {
+            abort()
+          })
+          .finally(() => {})
+      })
+    },
+    filterCharactersByName () {
+      if (this.filters.name.trim() === '') {
+        this.$q.notify({
+          message: 'You must enter a name to filter',
+          position: 'top'
+        })
+        return
+      }
+
+      const filters = {
+        nameStartsWith: this.filters.name
+      }
+      this.getFilteredCharacters(1, 20, filters)
+    },
+    filterCharactersByComics () {
+      const filters = {
+        comics: getArrayIds(this.filters.comic)
+      }
+
+      this.getFilteredCharacters(1, 20, filters)
+    },
+    filterCharactersByStories () {
+      const filters = {
+        stories: getArrayIds(this.filters.story)
+      }
+
+      this.getFilteredCharacters(1, 20, filters)
+    },
+    filterByAll () {
+      let filters = null
+
+      if (
+        this.filters.name.trim !== '' &&
+        this.filters.comic.length > 0 &&
+        this.filters.story.length > 0
+      ) {
+        return null
+      }
+
+      if (this.filters.name.trim !== '') {
+        filters['nameStartsWith'] = this.filters.name
+      }
+
+      if (this.filters.comic.length > 0) {
+        filters['comics'] = getArrayIds(this.filters.comic)
+      }
+
+      if (this.filters.story.length > 0) {
+        filters['stories'] = getArrayIds(this.filters.story)
+      }
+
+      return filters
+    },
+    cleanFilters () {
+
     }
   },
   computed: {},
   beforeMount () {
-    this.$q.loading.show()
     const { baseUrl, characters } = api
     const commonParams = hash.get()
     const url = `${baseUrl}${characters.path}`
-    const endpoint = generateUrl(url, commonParams)
+    const endpoint = generateUrl(
+      url,
+      commonParams,
+      this.currentPage,
+      this.count
+    )
 
-    this.$axios.get(endpoint).then(response => {
-      this.$q.loading.hide()
-      if (response.data.code === 200) {
-        this.characters = response.data.data.results
-      }
-    })
+    this.currentUrl = endpoint
+    this.changePage()
   }
 }
 </script>

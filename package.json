@@ -9,13 +9,15 @@
   "private": true,
   "scripts": {
     "lint": "eslint \"src/**/*.{js,vue}\"",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "deploy": "push-dir --dir=dist/spa --remote=gh-pages --branch=master"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "push-dir": "^0.4.1",
     "quasar": "^1.0.0"
   },
   "devDependencies": {

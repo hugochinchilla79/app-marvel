@@ -2,7 +2,6 @@
   <div>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="fit full-height" full-height flat bordered dark>
-        <q-img v-bind:src="img" full-height />
 
         <q-card-section>
           <div class="text-h5 q-mt-sm q-mb-xs">{{ value.title }}</div>
@@ -10,19 +9,10 @@
         </q-card-section>
 
         <q-card-actions>
+          <q-btn flat color="primary" label="Comics" />
           <q-btn flat round color="red" icon="favorite_border" />
 
           <q-space />
-
-          <q-btn
-            :to="{
-              name: 'comic-stories',
-              params: { id: value.id }
-            }"
-            flat
-            color="primary"
-            label="Stories"
-          />
 
           <q-btn
             color="grey"
@@ -49,7 +39,7 @@
 
 <script>
 export default {
-  name: 'comic',
+  name: 'story',
   props: {
     value: Object
   },

@@ -16,9 +16,26 @@ const routes = [
         props: true
       },
       {
+        path: '/character/:id/stories',
+        component: () => import('pages/PageCharactersStories.vue'),
+        name: 'characters-stories',
+        props: true
+      },
+      {
         path: '/comics',
         component: () => import('pages/ComicList.vue'),
         name: 'comics'
+      },
+      {
+        path: '/comics/:id/stories',
+        component: () => import('pages/PageComicsStories.vue'),
+        name: 'comic-stories',
+        props: true
+      },
+      {
+        path: '/stories',
+        component: () => import('pages/StoriesList.vue'),
+        name: 'stories'
       },
       {
         path: '/comics/:id',

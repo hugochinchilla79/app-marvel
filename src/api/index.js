@@ -6,6 +6,9 @@ const api = {
   },
   comics: {
     path: '/v1/public/comics'
+  },
+  stories: {
+    path: '/v1/public/stories'
   }
 }
 

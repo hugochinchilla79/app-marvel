@@ -47,12 +47,14 @@ module.exports = function (ctx) {
 
       components: [
         'QVirtualScroll',
-        'QCard'
+        'QCard',
+        'QBreadcrumbs',
+        'QBreadcrumbsEl'
       ],
       directives: [],
 
       // Quasar plugins
-      plugins: ['Loading']
+      plugins: ['Loading', 'Notify']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

@@ -2,45 +2,48 @@
   <div>
     <div class="row">
       <div
-        v-for="comic in comics"
-        v-bind:key="comic.id"
+        v-for="story in stories"
+        v-bind:key="story.id"
         class="col-xs-12 col-sm-4 col-lg-3 col-md-3"
       >
-        <comic v-bind:value="comic"></comic>
+        <story v-bind:value="story"></story>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import api from '../api'
 import { generateUrl } from '../commons/common'
 import hash from '../commons/hash'
-import Comic from '../components/Comic.vue'
+import Story from '../components/Story.vue'
 
 export default {
-  name: 'PageComic',
+  name: 'PageComicsStories',
+  props: {
+    id: Number
+  },
   components: {
-    Comic
+    Story
   },
   data () {
     return {
-      comics: []
+      stories: []
     }
   },
-  beforeMount () {
-    this.$q.loading.show()
+  methods: {},
+  computed: {},
 
+  beforeMount () {
     const { baseUrl, comics } = api
     const commonParams = hash.get()
-    const url = `${baseUrl}${comics.path}`
-    console.log(url)
+    const url = `${baseUrl}${comics.path}/${this.id}/stories`
 
     const endpoint = generateUrl(url, commonParams)
 
     this.$axios.get(endpoint).then(response => {
-      this.$q.loading.hide()
       if (response.data.code === 200) {
-        this.comics = response.data.data.results
+        this.stories = response.data.data.results
       }
     })
   }

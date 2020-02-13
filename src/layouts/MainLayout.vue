@@ -62,6 +62,12 @@ export default {
           caption: 'Comics List',
           icon: 'code',
           link: '/comics'
+        },
+        {
+          title: 'Stories',
+          caption: 'Stories list',
+          icon: 'code',
+          link: '/stories'
         }
       ]
     }
