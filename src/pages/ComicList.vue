@@ -65,154 +65,154 @@
   </div>
 </template>
 <script>
-import api from "../api";
-import { generateUrl } from "../commons/common";
-import hash from "../commons/hash";
-import Comic from "../components/Comic.vue";
+import api from '../api'
+import { generateUrl } from '../commons/common'
+import hash from '../commons/hash'
+import Comic from '../components/Comic.vue'
 
 export default {
-  name: "PageComic",
+  name: 'PageComic',
   components: {
     Comic
   },
-  data() {
+  data () {
     return {
       comics: [],
       currentPage: 1,
       total: 1,
       count: 20,
-      order: "title",
+      order: 'title',
       isLoading: false,
       filters: {
-        format: ""
+        format: ''
       },
       formats: [
         {
-          label: "Comic",
-          value: "comic"
+          label: 'Comic',
+          value: 'comic'
         },
         {
-          label: "Magazine",
-          value: "magazine"
+          label: 'Magazine',
+          value: 'magazine'
         },
         {
-          label: "Hardcover",
-          value: "hardcover"
+          label: 'Hardcover',
+          value: 'hardcover'
         },
         {
-          label: "Trade paperback",
-          value: "trade paperback"
+          label: 'Trade paperback',
+          value: 'trade paperback'
         },
         {
-          label: "Digest",
-          value: "digest"
+          label: 'Digest',
+          value: 'digest'
         },
         {
-          label: "Graphic novel",
-          value: "graphic novel"
+          label: 'Graphic novel',
+          value: 'graphic novel'
         },
         {
-          label: "Digital Comic",
-          value: "digital comic"
+          label: 'Digital Comic',
+          value: 'digital comic'
         },
         {
-          label: "Infinite comic",
-          value: "infinite comic"
+          label: 'Infinite comic',
+          value: 'infinite comic'
         }
       ],
       isFiltered: false
-    };
+    }
   },
   methods: {
-    changePage() {
+    changePage () {
       if (this.isFiltered) {
-        return;
+        return
       }
 
-      const { baseUrl, comics } = api;
-      const commonParams = hash.get();
-      const url = `${baseUrl}${comics.path}`;
-      commonParams["orderBy"] = this.order;
+      const { baseUrl, comics } = api
+      const commonParams = hash.get()
+      const url = `${baseUrl}${comics.path}`
+      commonParams['orderBy'] = this.order
       const endpoint = generateUrl(
         url,
         commonParams,
         this.currentPage,
         this.count
-      );
-      this.$q.loading.show();
-      this.isLoading = true;
+      )
+      this.$q.loading.show()
+      this.isLoading = true
       this.$axios
         .get(endpoint)
         .then(response => {
           if (response.data.code === 200) {
             this.total = Math.floor(
               response.data.data.total / response.data.data.count
-            );
+            )
 
             this.total =
               response.data.data.total % response.data.data.count !== 0
                 ? this.total + 1
-                : this.total;
-            this.comics = response.data.data.results;
+                : this.total
+            this.comics = response.data.data.results
           }
         })
         .catch(() => {})
         .finally(() => {
-          this.isLoading = false;
-          this.$q.loading.hide();
-          window.scrollTo(0, 0);
-        });
+          this.isLoading = false
+          this.$q.loading.hide()
+          window.scrollTo(0, 0)
+        })
     },
-    getFilteredComics(page = 1, count = 20, filters = null) {
-      const { baseUrl, comics } = api;
-      let commonParams = hash.get();
+    getFilteredComics (page = 1, count = 20, filters = null) {
+      const { baseUrl, comics } = api
+      let commonParams = hash.get()
 
       let params = filters
         ? { ...commonParams, ...filters }
-        : { ...commonParams };
+        : { ...commonParams }
 
-      const url = `${baseUrl}${comics.path}`;
-      const endpoint = generateUrl(url, params, page, count);
+      const url = `${baseUrl}${comics.path}`
+      const endpoint = generateUrl(url, params, page, count)
 
       this.$axios.get(endpoint).then(response => {
         if (response.data.code === 200) {
           this.total = Math.floor(
             response.data.data.total / response.data.data.count
-          );
+          )
 
           this.total =
             response.data.data.total % response.data.data.count !== 0
               ? this.total + 1
-              : this.total;
-          this.comics = response.data.data.results;
-          this.currentPage = 1;
-          this.isFiltered = true;
+              : this.total
+          this.comics = response.data.data.results
+          this.currentPage = 1
+          this.isFiltered = true
         }
-      });
+      })
     },
-    filterByFormat() {
-      if (this.filters.format === "") {
+    filterByFormat () {
+      if (this.filters.format === '') {
         this.$q.notify({
-          message: "You must select one format",
-          position: "top"
-        });
+          message: 'You must select one format',
+          position: 'top'
+        })
 
-        return;
+        return
       }
 
       const filters = {
         format: this.filters.format.value
-      };
+      }
 
-      this.getFilteredComics(1, 20, filters);
+      this.getFilteredComics(1, 20, filters)
     },
-    clearFilters() {
-      this.filters.format = "";
-      this.isFiltered = false;
+    clearFilters () {
+      this.filters.format = ''
+      this.isFiltered = false
     }
   },
-  beforeMount() {
-    this.changePage();
+  beforeMount () {
+    this.changePage()
   }
-};
+}
 </script>
