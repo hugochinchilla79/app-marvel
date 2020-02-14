@@ -68,6 +68,12 @@ export default {
           caption: 'Stories list',
           icon: 'code',
           link: '/stories'
+        },
+        {
+          title: 'Saved Items',
+          caption: 'Stories list',
+          icon: 'code',
+          link: '/saved-items'
         }
       ]
     }

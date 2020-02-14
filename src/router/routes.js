@@ -51,6 +51,11 @@ const routes = [
         path: '/character/:id',
         component: () => import('pages/PageCharacter.vue'),
         props: true
+      },
+      {
+        path: '/saved-items',
+        component: () => import('pages/PageSavedItems.vue'),
+        props: true
       }
     ]
   }

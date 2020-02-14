@@ -10,8 +10,15 @@
         </q-card-section>
 
         <q-card-actions>
-          <q-btn flat round color="red" icon="favorite_border" />
-
+          <q-btn
+            v-if="!isSaved"
+            v-on:click="saveComic()"
+            flat
+            round
+            color="red"
+            icon="favorite_border"
+          />
+          <q-btn v-if="isSaved" v-on:click="deleteComic()" flat round color="red" icon="favorite" />
           <q-space />
 
           <q-btn
@@ -58,6 +65,8 @@
 </template>
 
 <script>
+import storage from '../storage'
+
 export default {
   name: 'comic',
   props: {
@@ -68,10 +77,22 @@ export default {
       expanded: false
     }
   },
-  methods: {},
+  methods: {
+    saveComic () {
+      storage.saveComic(this.value)
+      storage.saveComicId(this.value.id)
+    },
+    deleteComic () {
+      storage.deleteComic(this.value)
+      storage.deleteComicId(this.value.id)
+    }
+  },
   computed: {
     img () {
       return `${this.value.thumbnail.path}.${this.value.thumbnail.extension}`
+    },
+    isSaved () {
+      return storage.comicIds.indexOf(this.value.id) !== -1
     }
   }
 }

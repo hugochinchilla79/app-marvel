@@ -12,7 +12,7 @@ function generateUrl (url, params, page = 1, count = 20) {
 
 function getArrayIds (array) {
   let ids = ''
-
+  console.log(array)
   const length = array.length
   let counter = 1
 

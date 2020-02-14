@@ -2,15 +2,28 @@
   <div>
     <div class="q-pa-md row items-start q-gutter-md">
       <q-card class="fit full-height" full-height flat bordered dark>
-
         <q-card-section>
           <div class="text-h5 q-mt-sm q-mb-xs">{{ value.title }}</div>
           <div class="text-caption text-grey"></div>
         </q-card-section>
 
         <q-card-actions>
-          <q-btn flat color="primary" label="Comics" />
-          <q-btn flat round color="red" icon="favorite_border" />
+          <q-btn
+            v-if="!isSaved"
+            v-on:click="saveStory()"
+            flat
+            round
+            color="red"
+            icon="favorite_border"
+          />
+          <q-btn
+            v-if="isSaved"
+            v-on:click="deleteStory()"
+            flat
+            round
+            color="red"
+            icon="favorite"
+          />
 
           <q-space />
 
@@ -38,6 +51,8 @@
 </template>
 
 <script>
+import storage from '../storage'
+
 export default {
   name: 'story',
   props: {
@@ -48,10 +63,22 @@ export default {
       expanded: false
     }
   },
-  methods: {},
+  methods: {
+    saveStory () {
+      storage.saveStory(this.value)
+      storage.saveStoryId(this.value.id)
+    },
+    deleteStory () {
+      storage.deleteStory(this.value)
+      storage.deleteStoryId(this.value.id)
+    }
+  },
   computed: {
     img () {
       return `${this.value.thumbnail.path}.${this.value.thumbnail.extension}`
+    },
+    isSaved () {
+      return storage.storyIds.indexOf(this.value.id) !== -1
     }
   }
 }

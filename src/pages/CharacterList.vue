@@ -24,39 +24,6 @@
               use-input
               multiple
               use-chips
-              v-model="filters.story"
-              input-debounce="0"
-              label="Enter a comic's name"
-              :options="stories"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-
-          <div
-            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left self-align-center q-pa-sm"
-          >
-            <q-btn v-on:click="filterCharactersByStories()" color="primary">
-              FILTER BY STORIES
-            </q-btn>
-          </div>
-        </div>
-
-        <div class="row">
-          <div
-            class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-center self-align-center q-pa-sm"
-          >
-            <q-select
-              filled
-              use-input
-              multiple
-              use-chips
               v-model="filters.comic"
               input-debounce="0"
               label="Enter a comic's name"
@@ -76,7 +43,7 @@
           <div
             class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left self-align-center q-pa-sm"
           >
-            <q-btn v-on:click="filterCharactersByStories()" color="primary">
+            <q-btn v-on:click="filterCharactersByComics()" color="primary">
               FILTER BY COMICS
             </q-btn>
           </div>
@@ -91,6 +58,16 @@
           <div class="col-3 q-pa-sm text-left">
             <q-btn v-on:click="filterByAll()" color="primary">
               Filter by all
+            </q-btn>
+          </div>
+          <div class="col-3 q-pa-sm text-left">
+            <q-btn v-on:click="orderAsc()" color="primary">
+              Order by Name ASC
+            </q-btn>
+          </div>
+          <div class="col-3 q-pa-sm text-left">
+            <q-btn v-on:click="orderDesc()" color="primary">
+              Order by Name DESC
             </q-btn>
           </div>
         </div>
@@ -154,7 +131,8 @@ export default {
         nameStartsWith: '',
         comics: '',
         stories: ''
-      }
+      },
+      order: 'name'
     }
   },
   methods: {
@@ -193,6 +171,7 @@ export default {
       const { baseUrl, characters } = api
       const commonParams = hash.get()
       const url = `${baseUrl}${characters.path}`
+      commonParams['orderBy'] = this.order
       const endpoint = generateUrl(
         url,
         commonParams,
@@ -268,13 +247,28 @@ export default {
       this.getFilteredCharacters(1, 20, filters)
     },
     filterCharactersByComics () {
+      if (this.filters.comic.length === 0) {
+        this.$q.notify({
+          message: 'You must enter at least one comic',
+          position: 'top'
+        })
+
+        return
+      }
       const filters = {
         comics: getArrayIds(this.filters.comic)
       }
-
+      console.log(filters)
       this.getFilteredCharacters(1, 20, filters)
     },
     filterCharactersByStories () {
+      if (this.filters.story.length === 0) {
+        this.$q.notify({
+          message: 'You must enter at least one storie',
+          position: 'top'
+        })
+      }
+
       const filters = {
         stories: getArrayIds(this.filters.story)
       }
@@ -312,6 +306,14 @@ export default {
       this.filters.comic = []
       this.isFiltered = false
       this.currentPage = 1
+      this.changePage()
+    },
+    orderAsc () {
+      this.order = 'name'
+      this.changePage()
+    },
+    orderDesc () {
+      this.order = '-name'
       this.changePage()
     }
   },

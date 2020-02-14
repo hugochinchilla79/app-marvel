@@ -35,8 +35,8 @@
             color="primary"
             label="Stories"
           />
-          <q-btn v-if="!saved" v-on:click="saveCharacter()" flat round color="red" icon="favorite_border" />
-          <q-btn v-if="saved" flat round color="red" icon="favorite" />
+          <q-btn v-if="!isSaved" v-on:click="saveCharacter()" flat round color="red" icon="favorite_border" />
+          <q-btn v-if="isSaved" v-on:click="deleteCharacter()" flat round color="red" icon="favorite" />
 
           <q-space />
 
@@ -81,13 +81,17 @@ export default {
     saveCharacter () {
       storage.saveCharacter(this.value)
       storage.saveCharacterId(this.value.id)
+    },
+    deleteCharacter () {
+      storage.deleteCharacter(this.value)
+      storage.deleteCharacterId(this.value.id)
     }
   },
   computed: {
     img () {
       return `${this.value.thumbnail.path}.${this.value.thumbnail.extension}`
     },
-    saved () {
+    isSaved () {
       return (storage.characterIds.indexOf(this.value.id) !== -1)
     }
   },

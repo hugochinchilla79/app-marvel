@@ -32,6 +32,7 @@ export default {
   computed: {},
 
   beforeMount () {
+    this.$q.loading.show()
     const { baseUrl, stories } = api
     const commonParams = hash.get()
     const url = `${baseUrl}${stories.path}`
@@ -42,6 +43,10 @@ export default {
       if (response.data.code === 200) {
         this.stories = response.data.data.results
       }
+    }).catch(() => {
+
+    }).finally(() => {
+      this.$q.loading.hide()
     })
   }
 }
