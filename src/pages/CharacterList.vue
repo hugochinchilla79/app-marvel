@@ -42,8 +42,8 @@
           <div
             class="col-xs-12 col-lg-6 col-md-6 col-sm-6 text-left self-align-center q-pa-sm"
           >
-            <q-btn v-on:click="filterCharactersByComics()" color="primary">
-              FILTER BY COMICS
+            <q-btn v-on:click="filterCharactersByStories()" color="primary">
+              FILTER BY STORIES
             </q-btn>
           </div>
         </div>
@@ -83,9 +83,14 @@
         </div>
 
         <div class="row">
-          <div class="col-3 q-pa-sm">
+          <div class="col-3 q-pa-sm text-left">
             <q-btn v-on:click="clearFilters()" color="primary">
-                Clean filters
+              Clean filters
+            </q-btn>
+          </div>
+          <div class="col-3 q-pa-sm text-left">
+            <q-btn v-on:click="filterByAll()" color="primary">
+              Filter by all
             </q-btn>
           </div>
         </div>
@@ -105,9 +110,8 @@
 
     <div class="q-pa-lg flex flex-center">
       <q-pagination
-        v-if="filtered"
         v-model="currentPage"
-        ,
+        v-if="!isFiltered"
         color="black"
         :max="total"
         :max-pages="15"
@@ -145,7 +149,7 @@ export default {
       comics: [],
       stories: [],
       currentUrl: '',
-      filtered: false,
+      isFiltered: false,
       dataFilters: {
         nameStartsWith: '',
         comics: '',
@@ -177,6 +181,7 @@ export default {
               : this.total
           this.characters = response.data.data.results
           this.currentPage = 1
+          this.isFiltered = true
         }
       })
     },
@@ -184,6 +189,19 @@ export default {
       if (this.filtered) {
         return
       }
+
+      const { baseUrl, characters } = api
+      const commonParams = hash.get()
+      const url = `${baseUrl}${characters.path}`
+      const endpoint = generateUrl(
+        url,
+        commonParams,
+        this.currentPage,
+        this.count
+      )
+
+      this.currentUrl = endpoint
+
       this.$q.loading.show()
       this.$axios
         .get(this.currentUrl)
@@ -288,23 +306,17 @@ export default {
 
       return filters
     },
-    cleanFilters () {
-
+    clearFilters () {
+      this.filters.name = ''
+      this.filters.story = []
+      this.filters.comic = []
+      this.isFiltered = false
+      this.currentPage = 1
+      this.changePage()
     }
   },
   computed: {},
   beforeMount () {
-    const { baseUrl, characters } = api
-    const commonParams = hash.get()
-    const url = `${baseUrl}${characters.path}`
-    const endpoint = generateUrl(
-      url,
-      commonParams,
-      this.currentPage,
-      this.count
-    )
-
-    this.currentUrl = endpoint
     this.changePage()
   }
 }

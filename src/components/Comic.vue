@@ -25,6 +25,16 @@
           />
 
           <q-btn
+            :to="{
+              name: 'comics-characters',
+              params: { id: value.id }
+            }"
+            flat
+            color="primary"
+            label="Characters"
+          />
+
+          <q-btn
             color="grey"
             round
             flat

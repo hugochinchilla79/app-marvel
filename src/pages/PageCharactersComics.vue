@@ -1,14 +1,22 @@
 <template>
   <div>
     <div v-if="character" class="row q-pa-md">
-      <div class="col-xs-12 col-sm-4 col-lg-4 col-md-4">
-        <q-card class="my-card">
-          <q-img :src="img" style="max-height:250px;" basic>
-            <div class="absolute-bottom text-h6">
-             {{ character.name }} comics
-            </div>
-          </q-img>
+      <div class="col-xs-12 col-sm-8 col-lg-8 col-md-8 q-pa-md">
+        <q-card class="my-card" flat bordered>
+          <q-card-section horizontal>
+            <q-img :src="img" style="max-height:250px;" basic>
+              <div class="absolute-bottom text-h6">
+                {{ character.name }} comics
+              </div>
+            </q-img>
+
+            <q-card-actions vertical class="justify-around q-px-md">
+              <q-btn outline rounded color="dark" :to="{ name: 'characters-stories', props: {id: character.id} }" label="Stories" />
+              <q-btn flat round color="red" :to="{ name: 'characters' }" icon="keyboard_return" />
+            </q-card-actions>
+          </q-card-section>
         </q-card>
+
       </div>
     </div>
 

@@ -33,6 +33,12 @@ const routes = [
         props: true
       },
       {
+        path: '/comics/:id/characters',
+        component: () => import('pages/PageComicsCharacters.vue'),
+        name: 'comics-characters',
+        props: true
+      },
+      {
         path: '/stories',
         component: () => import('pages/StoriesList.vue'),
         name: 'stories'
