@@ -1,5 +1,5 @@
 const api = {
-  baseUrl: 'http://gateway.marvel.com',
+  baseUrl: 'https://gateway.marvel.com',
 
   characters: {
     path: '/v1/public/characters'
