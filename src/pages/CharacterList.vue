@@ -88,7 +88,7 @@
     <div class="q-pa-lg flex flex-center">
       <q-pagination
         v-model="currentPage"
-        v-if="!isFiltered"
+        v-if="!isFiltered && !isLoading"
         color="black"
         :max="total"
         :max-pages="15"
@@ -132,7 +132,8 @@ export default {
         comics: '',
         stories: ''
       },
-      order: 'name'
+      order: 'name',
+      isLoading: false
     }
   },
   methods: {
@@ -182,6 +183,7 @@ export default {
       this.currentUrl = endpoint
 
       this.$q.loading.show()
+      this.isLoading = true
       this.$axios
         .get(this.currentUrl)
         .then(response => {
@@ -200,6 +202,7 @@ export default {
         .catch(() => {})
         .finally(() => {
           this.$q.loading.hide()
+          this.isLoading = false
           window.scrollTo(0, 0)
         })
     },
